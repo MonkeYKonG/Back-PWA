@@ -8,15 +8,11 @@ class MusicStyle(models.TextChoices):
     ELECTRO = 'electro'
 
 
-class Playlist(models.Model):
-    title = models.TextField()
-    added_on = models.DateField(auto_now=True)
-
-
 class Album(models.Model):
     title = models.TextField()
     added_on = models.DateField(auto_now=True)
     date = models.DateField()
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums', editable=False)
 
 
 class Sound(models.Model):
@@ -24,6 +20,12 @@ class Sound(models.Model):
     style = models.CharField(choices=MusicStyle.choices, max_length=0x100)
     file = models.FileField()
     added_on = models.DateField(auto_now=True, editable=False)
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds')
-    playlists = models.ManyToManyField(Playlist, related_name='sounds')
-    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sounds')
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds', null=True)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sounds', editable=False)
+
+
+class Playlist(models.Model):
+    title = models.TextField()
+    added_on = models.DateField(auto_now=True)
+    sounds = models.ManyToManyField(Sound)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='playlists', editable=False)
