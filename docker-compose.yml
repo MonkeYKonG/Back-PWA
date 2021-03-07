@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: pwa
+      MYSQL_DB_NAME: pwa
+      MYSQL_USER: pwa
+      MYSQL_PASSWORD: pwa
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    ports:
+    - "3306:3306"
+
+  local:
+    container_name: pwa
+    image: pwa
+    build:
+      context: .
+    volumes:
+      - .:/code
+    depends_on:
+      - mysql
+    ports:
+    - "8000:8000"
+    tty: true
