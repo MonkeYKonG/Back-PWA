@@ -22,5 +22,5 @@ RUN pipenv install --system --deploy --ignore-pipfile
 
 STOPSIGNAL SIGINT
 ENTRYPOINT [ "daphne", "back.asgi:application" ]
-#CMD [ "runserver", "0.0.0.0:8000" ]
+CMD [ "-b", "0.0.0.0", "-p", "8000" ]
 
