@@ -67,19 +67,19 @@ class PlaylistComment(BaseComment):
 
 class UserFollowing(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_followed', editable=False)
-    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers', editable=False)
+    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
 
 
 class PlaylistFollowing(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='playlist_followed', editable=False)
-    target = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='followers', editable=False)
+    target = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='followers')
 
 
 class SoundLike(models.Model):
-    sound = models.ForeignKey(Sound, on_delete=models.CASCADE, related_name='likers', editable=False)
+    sound = models.ForeignKey(Sound, on_delete=models.CASCADE, related_name='likers')
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sound_likes', editable=False)
 
 
 class PlaylistLike(models.Model):
-    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='likers', editable=False)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='likers')
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='playlist_likes', editable=False)

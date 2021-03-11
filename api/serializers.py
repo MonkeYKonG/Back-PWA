@@ -7,9 +7,15 @@ from api.models import User, Sound, Album, Playlist, Artist, SoundComment, UserF
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SlugRelatedField(read_only=True, slug_field='picture')
+    sounds = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    playlists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'email', "first_name", "last_name")
+        fields = (
+            'id', 'username', 'password', 'email', 'first_name', 'last_name', 'profile_picture', 'sounds', 'playlists'
+        )
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -20,6 +26,28 @@ class UserSerializer(serializers.ModelSerializer):
         if 'password' in validated_data:
             validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+
+
+class CompleteUserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SlugRelatedField(read_only=True, slug_field='picture')
+    notification_subscription = serializers.SlugRelatedField(read_only=True, slug_field='token')
+    albums = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    sounds = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    playlists = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    sound_comments = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    playlist_comments = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    followers = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    sound_likes = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    playlist_likes = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+
+    class Meta:
+        model = User
+        fields = '__all__'
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -57,7 +85,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        fields = ('id', 'name', )
+        fields = ('id', 'name',)
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -100,7 +128,7 @@ class UserFollowingSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class PlaylistFollowingSerialzier(serializers.ModelSerializer):
+class PlaylistFollowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaylistFollowing
         fields = ('id', 'added_by', 'target')

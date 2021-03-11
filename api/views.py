@@ -1,9 +1,11 @@
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from rest_framework import permissions, viewsets, generics, mixins
 
-from api.models import User, Sound, Album, Playlist, MusicStyle, Artist, SoundComment, PlaylistComment
+from api.models import User, Sound, Album, Playlist, MusicStyle, Artist, SoundComment, PlaylistComment, UserFollowing, \
+    PlaylistFollowing, SoundLike, PlaylistLike
 from api.serializers import UserSerializer, SoundSerializer, AlbumSerializer, PlaylistSerializer, ArtistSerializer, \
-    MusicStyleSerializer, SoundCommentSerializer, PlaylistCommentSerializer
+    MusicStyleSerializer, SoundCommentSerializer, PlaylistCommentSerializer, UserFollowingSerializer, \
+    PlaylistFollowingSerializer, SoundLikeSerializer, PlaylistLikeSerializer, CompleteUserSerializer
 
 
 class IsSelf(permissions.BasePermission):
@@ -91,7 +93,7 @@ class PlaylistViewSet(viewsets.ModelViewSet):
 
 class GetProfile(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CompleteUserSerializer
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
 
     def retrieve(self, request, *args, **kwargs):
@@ -105,13 +107,39 @@ class MusicStyleViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
 
 
-class SoundCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    queryset = SoundComment
+class CreateDestroyViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CreateUpdateDestroyViewSet(mixins.UpdateModelMixin, CreateDestroyViewSet):
+    pass
+
+
+class SoundCommentViewSet(CreateUpdateDestroyViewSet):
+    queryset = SoundComment.objects.all()
     serializer_class = SoundCommentSerializer
 
 
-class PlaylistCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    queryset = PlaylistComment
+class PlaylistCommentViewSet(CreateUpdateDestroyViewSet):
+    queryset = PlaylistComment.objects.all()
     serializer_class = PlaylistCommentSerializer
 
 
+class UserFollowingViewSet(CreateDestroyViewSet):
+    queryset = UserFollowing.objects.all()
+    serializer_class = UserFollowingSerializer
+
+
+class PlaylistFollowingViewSet(CreateDestroyViewSet):
+    queryset = PlaylistFollowing.objects.all()
+    serializer_class = PlaylistFollowingSerializer
+
+
+class SoundLikeViewSet(CreateDestroyViewSet):
+    queryset = SoundLike.objects.all()
+    serializer_class = SoundLikeSerializer
+
+
+class PlaylistLikeViewSet(CreateDestroyViewSet):
+    queryset = PlaylistLike.objects.all()
+    serializer_class = PlaylistLikeSerializer
