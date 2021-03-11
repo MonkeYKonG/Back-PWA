@@ -26,7 +26,7 @@ class Album(models.Model):
     picture = models.FileField(null=True)
 
 
-class Artists(models.Model):
+class Artist(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
 
@@ -36,7 +36,7 @@ class Sound(models.Model):
     file = models.FileField()
     added_on = models.DateField(auto_now=True, editable=False)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds', null=True)
-    artist = models.ForeignKey(Artists, on_delete=models.CASCADE, related_name='sounds', null=True)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='sounds', null=True)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sounds', editable=False)
 
 

@@ -2,7 +2,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from api.models import User, Sound, Album, Playlist
+from api.models import User, Sound, Album, Playlist, Artist, SoundComment, UserFollowing, PlaylistFollowing, SoundLike, \
+    PlaylistLike
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
+        if 'password' in validated_data:
+            validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
 
@@ -43,6 +45,13 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = ('id', 'name', )
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -52,3 +61,64 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class SoundCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SoundComment
+        fields = ('id', 'sound', 'post_by', 'added_on', 'message')
+
+    def create(self, validated_data):
+        validated_data['post_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class PlaylistCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SoundComment
+        fields = ('id', 'playlist', 'post_by', 'added_on', 'message')
+
+    def create(self, validated_data):
+        validated_data['post_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class UserFollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFollowing
+        fields = ('id', 'added_by', 'target')
+
+    def create(self, validated_data):
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class PlaylistFollowingSerialzier(serializers.ModelSerializer):
+    class Meta:
+        model = PlaylistFollowing
+        fields = ('id', 'added_by', 'target')
+
+    def create(self, validated_data):
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class SoundLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SoundLike
+        fields = ('id', 'sound', 'added_by')
+
+    def create(self, validated_data):
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
+
+class PlaylistLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaylistLike
+        fields = ('id', 'playlist', 'added_by')
+
+    def create(self, validated_data):
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
