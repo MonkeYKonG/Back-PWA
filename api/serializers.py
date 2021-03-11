@@ -65,7 +65,7 @@ class MusicStyleSerializer(serializers.ModelSerializer):
 class SoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sound
-        fields = ("id", "title", 'style', 'file', 'added_on', 'album', 'added_by')
+        fields = ('id', 'title', 'style', 'file', 'added_on', 'album', 'artist', 'added_by')
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
@@ -75,11 +75,7 @@ class SoundSerializer(serializers.ModelSerializer):
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = ('id', 'title', 'added_on', 'date')
-
-    def create(self, validated_data):
-        validated_data['added_by'] = self.context['request'].user
-        return super().create(validated_data)
+        fields = ('id', 'title', 'picture')
 
 
 class ArtistSerializer(serializers.ModelSerializer):

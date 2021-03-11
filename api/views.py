@@ -1,3 +1,5 @@
+import abc
+
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from rest_framework import permissions, viewsets, generics, mixins
 
@@ -18,7 +20,27 @@ class IsSelf(permissions.BasePermission):
         return self._verify_function(request)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class CreateDestroyViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CreateUpdateDestroyViewSet(mixins.UpdateModelMixin, CreateDestroyViewSet):
+    pass
+
+
+class ProtectedManagementViewSet(viewsets.ModelViewSet):
+    @abc.abstractmethod
+    def _verify_self(self, request):
+        raise NotImplementedError('_verify_self must be defined on sub classes')
+
+    def get_permissions(self):
+        perms = super().get_permissions()
+        if self.action in ('update', 'partial_update', 'delete'):
+            perms = [IsSelf(self._verify_self), permissions.IsAdminUser()]
+        return perms
+
+
+class UserViewSet(ProtectedManagementViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -26,69 +48,42 @@ class UserViewSet(viewsets.ModelViewSet):
         return self.kwargs['pk'] == request.user.pk
 
     def get_permissions(self):
-        perms = []
         if self.action in ('create',):
-            perms = []
-        elif self.action in ('update', 'partial_update', 'delete'):
-            perms += [IsSelf(self._verify_self), permissions.IsAdminUser(), permissions.IsAuthenticated(), TokenHasReadWriteScope()]
-        return perms
+            return []
+        return super().get_permissions()
 
 
-class SoundViewSet(viewsets.ModelViewSet):
+class SoundViewSet(ProtectedManagementViewSet):
     queryset = Sound.objects.all()
     serializer_class = SoundSerializer
 
     def _verify_self(self, request):
-        return request.user.sounds.filter(pk=self.kwargs['pk']).count() == 1
+        return request.user.sounds.filter(pk=self.kwargs['pk']).exists()
 
     def get_permissions(self):
         perms = []
         if self.action in ('update', 'partial_update', 'delete'):
-            perms += [IsSelf(self._verify_self), permissions.IsAdminUser(), permissions.IsAuthenticated(), TokenHasReadWriteScope()]
+            perms += [IsSelf(self._verify_self), permissions.IsAdminUser(), permissions.IsAuthenticated(),
+                      TokenHasReadWriteScope()]
         return perms
 
 
-class AlbumViewSet(viewsets.ModelViewSet):
+class AlbumViewSet(CreateUpdateDestroyViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
-    def _verify_self(self, request):
-        return request.user.albums.filter(pk=self.kwargs['pk']).count() == 1
 
-    def get_permissions(self):
-        perms = []
-        if self.action in ('update', 'partial_update', 'delete'):
-            perms += [IsSelf(self._verify_self), permissions.IsAdminUser(), permissions.IsAuthenticated(), TokenHasReadWriteScope()]
-        return perms
-
-
-class ArtistViewSet(viewsets.ModelViewSet):
+class ArtistViewSet(CreateUpdateDestroyViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
 
-    def get_permissions(self):
-        perms = []
-        if self.action in ('list', 'retrieve'):
-            pass
-        if self.action in ('create'):
-            perms += [permissions.IsAuthenticated(), TokenHasReadWriteScope()]
-        if self.action in ('update', 'partial_update', 'destroy'):
-            perms += [permissions.IsAuthenticated(), permissions.IsAdminUser(), TokenHasReadWriteScope()]
-        return perms
 
-
-class PlaylistViewSet(viewsets.ModelViewSet):
+class PlaylistViewSet(ProtectedManagementViewSet):
     queryset = Playlist.objects.all()
     serializer_class = PlaylistSerializer
 
     def _verify_self(self, request):
-        return request.user.playlists.filter(pk=self.kwargs['pk']).count() == 1
-
-    def get_permissions(self):
-        perms = [permissions.IsAuthenticated(), TokenHasReadWriteScope()]
-        if self.action in ('update', 'partial_update', 'delete'):
-            perms += [IsSelf(self._verify_self), permissions.IsAdminUser()]
-        return perms
+        return request.user.playlists.filter(pk=self.kwargs['pk']).exists()
 
 
 class GetProfile(generics.RetrieveAPIView):
@@ -105,14 +100,6 @@ class MusicStyleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MusicStyle.objects.all()
     serializer_class = MusicStyleSerializer
     permission_classes = []
-
-
-class CreateDestroyViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    pass
-
-
-class CreateUpdateDestroyViewSet(mixins.UpdateModelMixin, CreateDestroyViewSet):
-    pass
 
 
 class SoundCommentViewSet(CreateUpdateDestroyViewSet):

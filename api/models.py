@@ -16,9 +16,6 @@ class ProfileNotificationSubscription(models.Model):
 
 class Album(models.Model):
     title = models.TextField()
-    added_on = models.DateField(auto_now=True)
-    date = models.DateField()
-    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums', editable=False)
     picture = models.FileField(null=True)
 
 
