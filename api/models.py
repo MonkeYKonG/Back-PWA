@@ -30,9 +30,13 @@ class Artist(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
 
+class MusicStyles(models.Model):
+    name = models.CharField(max_length=0x100)
+
+
 class Sound(models.Model):
     title = models.TextField()
-    style = models.CharField(choices=MusicStyle.choices, max_length=0x100)
+    style = models.ForeignKey(MusicStyles, on_delete=models.CASCADE)
     file = models.FileField()
     added_on = models.DateField(auto_now=True, editable=False)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds', null=True)

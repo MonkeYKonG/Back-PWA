@@ -105,8 +105,6 @@ class GetProfile(RetrieveAPIView):
         return super().retrieve(request, *args, **kwargs)
 
 
-
-
 @api_view(['GET'])
 @permission_classes([])
 def get_styles(request):
