@@ -72,7 +72,7 @@ class UserFollowing(models.Model):
 
 class PlaylistFollowing(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='playlist_followed', editable=False)
-    target = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers', editable=False)
+    target = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='followers', editable=False)
 
 
 class SoundLike(models.Model):
@@ -81,5 +81,5 @@ class SoundLike(models.Model):
 
 
 class PlaylistLike(models.Model):
-    playlist = models.ForeignKey(Sound, on_delete=models.CASCADE, related_name='likers', editable=False)
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name='likers', editable=False)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='playlist_likes', editable=False)
