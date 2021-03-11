@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 
 from api.models import User, Sound, Album, Playlist, Artist, SoundComment, UserFollowing, PlaylistFollowing, SoundLike, \
-    PlaylistLike
+    PlaylistLike, MusicStyle, PlaylistComment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +26,12 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ("name",)
+
+
+class MusicStyleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MusicStyle
+        fields = ('id', 'name')
 
 
 class SoundSerializer(serializers.ModelSerializer):
@@ -76,7 +82,7 @@ class SoundCommentSerializer(serializers.ModelSerializer):
 
 class PlaylistCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SoundComment
+        model = PlaylistComment
         fields = ('id', 'playlist', 'post_by', 'added_on', 'message')
 
     def create(self, validated_data):

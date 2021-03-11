@@ -4,10 +4,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class MusicStyle(models.TextChoices):
-    ELECTRO = 'electro'
-
-
 class ProfilePicture(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile_picture')
     picture = models.FileField(null=True)
@@ -30,13 +26,13 @@ class Artist(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
 
-class MusicStyles(models.Model):
-    name = models.CharField(max_length=0x100)
+class MusicStyle(models.Model):
+    name = models.CharField(max_length=0x100, unique=True)
 
 
 class Sound(models.Model):
     title = models.TextField()
-    style = models.ForeignKey(MusicStyles, on_delete=models.CASCADE)
+    style = models.ForeignKey(MusicStyle, on_delete=models.CASCADE)
     file = models.FileField()
     added_on = models.DateField(auto_now=True, editable=False)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds', null=True)

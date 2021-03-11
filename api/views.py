@@ -1,18 +1,12 @@
-from django.http import QueryDict
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
-from rest_framework import permissions, viewsets
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
-from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.permissions import BasePermission
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import permissions, viewsets, generics, mixins
 
-from api.models import User, Sound, Album, Playlist, MusicStyle, Artist
-from api.serializers import UserSerializer, SoundSerializer, AlbumSerializer, PlaylistSerializer, ArtistSerializer
+from api.models import User, Sound, Album, Playlist, MusicStyle, Artist, SoundComment, PlaylistComment
+from api.serializers import UserSerializer, SoundSerializer, AlbumSerializer, PlaylistSerializer, ArtistSerializer, \
+    MusicStyleSerializer, SoundCommentSerializer, PlaylistCommentSerializer
 
 
-class IsSelf(BasePermission):
+class IsSelf(permissions.BasePermission):
     def __init__(self, verify_function):
         self._verify_function = verify_function
 
@@ -95,7 +89,7 @@ class PlaylistViewSet(viewsets.ModelViewSet):
         return perms
 
 
-class GetProfile(RetrieveAPIView):
+class GetProfile(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
@@ -105,7 +99,19 @@ class GetProfile(RetrieveAPIView):
         return super().retrieve(request, *args, **kwargs)
 
 
-@api_view(['GET'])
-@permission_classes([])
-def get_styles(request):
-    return Response(MusicStyle.values)
+class MusicStyleViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = MusicStyle.objects.all()
+    serializer_class = MusicStyleSerializer
+    permission_classes = []
+
+
+class SoundCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = SoundComment
+    serializer_class = SoundCommentSerializer
+
+
+class PlaylistCommentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = PlaylistComment
+    serializer_class = PlaylistCommentSerializer
+
+
