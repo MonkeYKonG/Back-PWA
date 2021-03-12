@@ -11,6 +11,7 @@ django-oauth-toolkit = "*"
 daphne = "*"
 pyyaml = "*"
 uritemplate = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

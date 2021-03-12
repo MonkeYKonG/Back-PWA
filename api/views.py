@@ -158,7 +158,6 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         return Response(serializer.data)
 
 
-
 class GetProfile(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = CompleteUserSerializer

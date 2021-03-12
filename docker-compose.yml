@@ -20,6 +20,8 @@ services:
       context: .
     volumes:
       - .:/code
+    environment:
+      - "DJANGO_SETTINGS_MODULE=back.settings-production"
     depends_on:
       - mysql
     ports:
