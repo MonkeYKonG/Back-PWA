@@ -25,7 +25,7 @@ SECRET_KEY = 'jku9x9b1$)vi0)y)i#a4h%#+f*u_#v*fzq9*frp7&ff)i_%g-l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['x2021oxygene667208093000.francecentral.cloudapp.azure.com']
 
 
 # Application definition
