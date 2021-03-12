@@ -301,3 +301,4 @@ modules.xml
 # profiling data
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django,pycharm+all
+static

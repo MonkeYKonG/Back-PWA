@@ -20,6 +20,8 @@ services:
       context: .
     volumes:
       - .:/code
+      - ./media:/media
+      - ./static:/static
     environment:
       - "DJANGO_SETTINGS_MODULE=back.settings-production"
     depends_on:
