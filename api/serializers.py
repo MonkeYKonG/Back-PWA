@@ -68,10 +68,6 @@ class MinimalSoundSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'style', 'file', 'added_on')
 
-    def create(self, validated_data):
-        validated_data['added_by'] = self.context['request'].user
-        return super().create(validated_data)
-
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,6 +101,10 @@ class SoundSerializer(MinimalSoundSerializer):
         fields = MinimalSoundSerializer.Meta.fields + (
             'album', 'artist', 'added_by', 'album', 'artist'
         )
+
+    def create(self, validated_data):
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class CompleteSoundSerializer(SoundSerializer):

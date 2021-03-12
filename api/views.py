@@ -72,11 +72,9 @@ class SoundViewSet(ProtectedManagementViewSet):
         return request.user.sounds.filter(pk=self.kwargs['pk']).exists()
 
     def get_permissions(self):
-        perms = []
+        perms = super().get_permissions()
         if self.action in ('update', 'partial_update', 'delete'):
             perms += [permissions.OR(IsSelf(self._verify_self), permissions.IsAdminUser())]
-        if self.action == 'comment':
-            return super().get_permissions()
         return perms
 
     def get_serializer_class(self):
