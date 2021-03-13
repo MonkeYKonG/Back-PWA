@@ -163,3 +163,5 @@ STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
 MEDIA_ROOT = '/media/'
 MEDIA_URL = '/media/'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
