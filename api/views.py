@@ -1,7 +1,8 @@
 import abc
 
+from django.http import Http404
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
-from rest_framework import permissions, viewsets, generics, mixins
+from rest_framework import permissions, viewsets, generics, mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -63,6 +64,14 @@ class UserViewSet(ProtectedManagementViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    @action(methods=['delete'], detail=True, serializer_class=UserFollowingSerializer)
+    def unfollow(self, request, pk=None):
+        queryset = request.user.user_followed.filter(target=pk)
+        if not queryset.exists():
+            raise Http404
+        queryset.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
 
 class SoundViewSet(ProtectedManagementViewSet):
     queryset = Sound.objects.all()
@@ -97,6 +106,13 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    @action(methods=['delete'], detail=True, serializer_class=SoundLikeSerializer)
+    def unlike(self, request, pk=None):
+        queryset = request.user.sound_likes.filter(sound=pk)
+        if not queryset.exists():
+            raise Http404
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -147,6 +163,13 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    @action(methods=['delete'], detail=True, serializer_class=PlaylistLikeSerializer)
+    def unlike(self, request, pk=None):
+        queryset = request.user.playlist_followed.filter(playlist=pk)
+        if not queryset.exists():
+            raise Http404
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(methods=['post'], detail=True, serializer_class=PlaylistFollowingSerializer)
     def follow(self, request, pk=None):
         playlist = self.get_object()
@@ -154,6 +177,13 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    @action(methods=['delete'], detail=True, serializer_class=PlaylistFollowingSerializer)
+    def unfollow(self, request, pk=None):
+        queryset = request.user.playlist_followed.filter(target=pk)
+        if not queryset.exists():
+            raise Http404
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class GetProfile(generics.RetrieveAPIView):

@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from api.models import User, Sound, Album, Playlist, Artist, SoundComment, UserFollowing, PlaylistFollowing, SoundLike, \
     PlaylistLike, MusicStyle, PlaylistComment
@@ -45,6 +46,14 @@ class SoundLikeSerializer(serializers.ModelSerializer):
         model = SoundLike
         fields = ('id', 'sound', 'added_by')
 
+    def validate(self, attrs):
+        new_attrs = {'added_by': self.context['request'].user, 'sound': self.context['sound']}
+        UniqueTogetherValidator(
+            queryset=SoundLike.objects.all(),
+            fields=['added_by', 'target']
+        )(new_attrs, self)
+        return super().validate(new_attrs)
+
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
         validated_data['sound'] = self.context['sound']
@@ -55,6 +64,14 @@ class PlaylistLikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaylistLike
         fields = ('id', 'playlist', 'added_by')
+
+    def validate(self, attrs):
+        new_attrs = {'added_by': self.context['request'].user, 'playlist': self.context['playlist']}
+        UniqueTogetherValidator(
+            queryset=PlaylistLike.objects.all(),
+            fields=['added_by', 'target']
+        )(new_attrs, self)
+        return super().validate(new_attrs)
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
@@ -96,7 +113,6 @@ class CompleteArtistSerializer(ArtistSerializer):
 
 
 class SoundSerializer(MinimalSoundSerializer):
-
     class Meta(MinimalSoundSerializer.Meta):
         fields = MinimalSoundSerializer.Meta.fields + (
             'album', 'artist', 'added_by', 'album', 'artist'
@@ -161,6 +177,14 @@ class UserFollowingSerializer(serializers.ModelSerializer):
         model = UserFollowing
         fields = ('id', 'added_by', 'target')
 
+    def validate(self, attrs):
+        new_attrs = {'added_by': self.context['request'].user, 'target': self.context['user']}
+        UniqueTogetherValidator(
+            queryset=UserFollowing.objects.all(),
+            fields=['added_by', 'target']
+        )(new_attrs, self)
+        return super().validate(new_attrs)
+
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
         validated_data['target'] = self.context['user']
@@ -171,6 +195,14 @@ class PlaylistFollowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaylistFollowing
         fields = ('id', 'added_by', 'target')
+
+    def validate(self, attrs):
+        new_attrs = {'added_by': self.context['request'].user, 'target': self.context['playlist']}
+        UniqueTogetherValidator(
+            queryset=PlaylistFollowing.objects.all(),
+            fields=['added_by', 'target']
+        )(new_attrs, self)
+        return super().validate(new_attrs)
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
@@ -194,6 +226,7 @@ class CompleteUserSerializer(MinimalUserSerializer):
     sound_comments = SoundCommentSerializer(read_only=True, many=True)
     playlist_comments = PlaylistCommentSerializer(read_only=True, many=True)
     followers = UserFollowingSerializer(read_only=True, many=True)
+    user_followed = UserFollowingSerializer(read_only=True, many=True)
     sound_likes = SoundLikeSerializer(read_only=True, many=True)
     playlist_likes = PlaylistLikeSerializer(read_only=True, many=True)
 
