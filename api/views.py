@@ -82,6 +82,8 @@ class SoundViewSet(ProtectedManagementViewSet):
 
     def get_permissions(self):
         perms = super().get_permissions()
+        if self.action in ('retrieve', 'list'):
+            perms = []
         if self.action in ('update', 'partial_update', 'delete'):
             perms += [permissions.OR(IsSelf(self._verify_self), permissions.IsAdminUser())]
         return perms
