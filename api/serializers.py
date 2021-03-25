@@ -80,10 +80,12 @@ class PlaylistLikeSerializer(serializers.ModelSerializer):
 
 
 class MinimalSoundSerializer(serializers.ModelSerializer):
+    like_count = serializers.IntegerField(read_only=True, source='likes.count()')
+
     class Meta:
         model = Sound
         fields = (
-            'id', 'title', 'style', 'file', 'added_on')
+            'id', 'title', 'style', 'file', 'added_on', 'like_count')
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -115,7 +117,7 @@ class CompleteArtistSerializer(ArtistSerializer):
 class SoundSerializer(MinimalSoundSerializer):
     class Meta(MinimalSoundSerializer.Meta):
         fields = MinimalSoundSerializer.Meta.fields + (
-            'album', 'artist', 'added_by', 'album', 'artist'
+            'album', 'added_by', 'album',
         )
 
     def create(self, validated_data):
@@ -213,16 +215,16 @@ class PlaylistFollowingSerializer(serializers.ModelSerializer):
 class UserSerializer(MinimalUserSerializer):
     sounds_count = serializers.IntegerField(read_only=True, source='sounds.count()')
     playlists_count = serializers.IntegerField(read_only=True, source='playlists.count()')
+    sounds = MinimalSoundSerializer(read_only=True, many=True)
+    playlists = MinimalPlaylistSerializer(read_only=True, many=True)
 
     class Meta(MinimalUserSerializer.Meta):
-        fields = MinimalUserSerializer.Meta.fields + ('sounds_count', 'playlists_count')
+        fields = MinimalUserSerializer.Meta.fields + ('sounds_count', 'playlists_count', 'sounds', 'playlists')
 
 
 class CompleteUserSerializer(MinimalUserSerializer):
     notification_subscription = serializers.CharField(read_only=True, source='notification_subscription.token')
     albums = AlbumSerializer(read_only=True, many=True)
-    sounds = MinimalSoundSerializer(read_only=True, many=True)
-    playlists = MinimalPlaylistSerializer(read_only=True, many=True)
     sound_comments = SoundCommentSerializer(read_only=True, many=True)
     playlist_comments = PlaylistCommentSerializer(read_only=True, many=True)
     followers = UserFollowingSerializer(read_only=True, many=True)

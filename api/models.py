@@ -33,7 +33,6 @@ class Sound(models.Model):
     file = models.FileField()
     added_on = models.DateField(auto_now=True, editable=False)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='sounds', null=True)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='sounds', null=True)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sounds', editable=False)
 
 
