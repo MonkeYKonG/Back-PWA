@@ -127,6 +127,7 @@ class SoundSerializer(MinimalSoundSerializer):
 
 class CompleteSoundSerializer(SoundSerializer):
     comments = SoundCommentSerializer(many=True, read_only=True)
+    album = AlbumSerializer(read_only=True)
 
     class Meta(SoundSerializer.Meta):
         fields = SoundSerializer.Meta.fields + ('comments',)

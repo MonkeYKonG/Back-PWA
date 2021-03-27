@@ -52,7 +52,7 @@ class UserViewSet(ProtectedManagementViewSet):
         return int(self.kwargs['pk']) == int(request.user.pk)
 
     def get_permissions(self):
-        if self.action in ('create',):
+        if self.action in ('create', 'list', 'retrieve'):
             return []
         return super().get_permissions()
 
@@ -89,7 +89,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         return perms
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action in ('retrieve', 'list'):
             return CompleteSoundSerializer
         return super().get_serializer_class()
 
@@ -126,6 +126,11 @@ class AlbumViewSet(viewsets.ModelViewSet):
             return CompleteAlbumSerializer
         return super().get_serializer_class()
 
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return []
+        return super().get_permissions()
+
 
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
@@ -135,6 +140,11 @@ class ArtistViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return CompleteArtistSerializer
         return super().get_serializer_class()
+
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return []
+        return super().get_permissions()
 
 
 class PlaylistViewSet(ProtectedManagementViewSet):
@@ -148,6 +158,11 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         if self.action == 'retrieve':
             return CompletePlaylistSerializer
         return super().get_serializer_class()
+
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return []
+        return super().get_permissions()
 
     @action(methods=['POST'], detail=True, serializer_class=PlaylistCommentSerializer)
     def comment(self, request, pk=None):
