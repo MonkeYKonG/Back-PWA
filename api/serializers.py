@@ -50,7 +50,7 @@ class SoundLikeSerializer(serializers.ModelSerializer):
         new_attrs = {'added_by': self.context['request'].user, 'sound': self.context['sound']}
         UniqueTogetherValidator(
             queryset=SoundLike.objects.all(),
-            fields=['added_by', 'target']
+            fields=['added_by', 'sound']
         )(new_attrs, self)
         return super().validate(new_attrs)
 
@@ -69,7 +69,7 @@ class PlaylistLikeSerializer(serializers.ModelSerializer):
         new_attrs = {'added_by': self.context['request'].user, 'playlist': self.context['playlist']}
         UniqueTogetherValidator(
             queryset=PlaylistLike.objects.all(),
-            fields=['added_by', 'target']
+            fields=['added_by', 'playlist']
         )(new_attrs, self)
         return super().validate(new_attrs)
 
@@ -80,7 +80,8 @@ class PlaylistLikeSerializer(serializers.ModelSerializer):
 
 
 class MinimalSoundSerializer(serializers.ModelSerializer):
-    like_count = serializers.IntegerField(read_only=True, source='likes.count()')
+    like_count = serializers.IntegerField(read_only=True, source='likers.count')
+    comment_count = serializers.IntegerField(read_only=True, source='comments.count')
 
     class Meta:
         model = Sound
@@ -134,9 +135,14 @@ class CompleteSoundSerializer(SoundSerializer):
 
 
 class MinimalPlaylistSerializer(serializers.ModelSerializer):
+    like_count = serializers.IntegerField(read_only=True, source='likers.count')
+    sound_count = serializers.IntegerField(read_only=True, source='sounds.count')
+    followers = serializers.IntegerField(read_only=True, source='followers.count')
+    comment_count = serializers.IntegerField(read_only=True, source='comments.count')
+
     class Meta:
         model = Playlist
-        fields = ('id', 'title', 'added_on')
+        fields = ('id', 'title', 'added_on', 'like_count', 'sound_count', 'followers', 'comment_count')
 
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
@@ -144,8 +150,10 @@ class MinimalPlaylistSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(MinimalPlaylistSerializer):
+    comments = PlaylistCommentSerializer(read_only=True, many=True)
+
     class Meta(MinimalPlaylistSerializer.Meta):
-        fields = MinimalPlaylistSerializer.Meta.fields + ('sounds', 'added_by')
+        fields = MinimalPlaylistSerializer.Meta.fields + ('sounds', 'added_by', 'comments')
 
 
 class MinimalUserSerializer(serializers.ModelSerializer):
@@ -214,13 +222,16 @@ class PlaylistFollowingSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(MinimalUserSerializer):
-    sounds_count = serializers.IntegerField(read_only=True, source='sounds.count()')
-    playlists_count = serializers.IntegerField(read_only=True, source='playlists.count()')
+    sounds_count = serializers.IntegerField(read_only=True, source='sounds.count')
+    playlists_count = serializers.IntegerField(read_only=True, source='playlists.count')
     sounds = MinimalSoundSerializer(read_only=True, many=True)
     playlists = MinimalPlaylistSerializer(read_only=True, many=True)
+    followers = serializers.IntegerField(read_only=True, source='followers.count')
+    followed = serializers.IntegerField(read_only=True, source='user_followed.count')
 
     class Meta(MinimalUserSerializer.Meta):
-        fields = MinimalUserSerializer.Meta.fields + ('sounds_count', 'playlists_count', 'sounds', 'playlists')
+        fields = MinimalUserSerializer.Meta.fields + (
+        'sounds_count', 'playlists_count', 'sounds', 'playlists', 'followers', 'followed')
 
 
 class CompleteUserSerializer(MinimalUserSerializer):

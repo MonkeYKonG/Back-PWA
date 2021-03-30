@@ -114,6 +114,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         queryset = request.user.sound_likes.filter(sound=pk)
         if not queryset.exists():
             raise Http404
+        queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -182,9 +183,10 @@ class PlaylistViewSet(ProtectedManagementViewSet):
 
     @action(methods=['delete'], detail=True, serializer_class=PlaylistLikeSerializer)
     def unlike(self, request, pk=None):
-        queryset = request.user.playlist_followed.filter(playlist=pk)
+        queryset = request.user.playlist_likes.filter(playlist=pk)
         if not queryset.exists():
             raise Http404
+        queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['post'], detail=True, serializer_class=PlaylistFollowingSerializer)
@@ -200,6 +202,7 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         queryset = request.user.playlist_followed.filter(target=pk)
         if not queryset.exists():
             raise Http404
+        queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
