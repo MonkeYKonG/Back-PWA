@@ -11,7 +11,8 @@ from api.models import User, Sound, Album, Playlist, MusicStyle, Artist, SoundCo
 from api.serializers import UserSerializer, SoundSerializer, AlbumSerializer, PlaylistSerializer, ArtistSerializer, \
     MusicStyleSerializer, SoundCommentSerializer, PlaylistCommentSerializer, UserFollowingSerializer, \
     PlaylistFollowingSerializer, SoundLikeSerializer, PlaylistLikeSerializer, CompleteUserSerializer, \
-    CompleteSoundSerializer, CompletePlaylistSerializer, CompleteAlbumSerializer, CompleteArtistSerializer
+    CompleteSoundSerializer, CompletePlaylistSerializer, CompleteAlbumSerializer, CompleteArtistSerializer, \
+    ProfilePictureSerializer
 
 
 class IsSelf(permissions.BasePermission):
@@ -55,6 +56,20 @@ class UserViewSet(ProtectedManagementViewSet):
         if self.action in ('create', 'list', 'retrieve'):
             return []
         return super().get_permissions()
+
+    @action(methods=['patch'], detail=True, serializer_class=ProfilePictureSerializer)
+    def update_profile_pricture(self, request, pk=None):
+        user = self.get_object()
+        try:
+            profile_picture = user.profile_picture
+            serializer = ProfilePictureSerializer(profile_picture, data={'picture': request.FILES['picture']},
+                                                  partial=True)
+        except: # TODO Search for good exception
+            data = {'user': request.user.pk, 'picture': request.FILES['picture']}
+            serializer = ProfilePictureSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=UserFollowingSerializer)
     def follow(self, request, pk=None):

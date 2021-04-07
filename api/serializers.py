@@ -4,13 +4,19 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.models import User, Sound, Album, Playlist, Artist, SoundComment, UserFollowing, PlaylistFollowing, SoundLike, \
-    PlaylistLike, MusicStyle, PlaylistComment
+    PlaylistLike, MusicStyle, PlaylistComment, ProfilePicture
 
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ("name",)
+
+
+class ProfilePictureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfilePicture
+        fields = ('picture', 'user')
 
 
 class MusicStyleSerializer(serializers.ModelSerializer):
@@ -86,7 +92,7 @@ class MinimalSoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sound
         fields = (
-            'id', 'title', 'style', 'file', 'added_on', 'like_count')
+            'id', 'title', 'style', 'file', 'added_on', 'like_count', 'comment_count')
 
 
 class AlbumSerializer(serializers.ModelSerializer):
