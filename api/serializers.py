@@ -21,6 +21,11 @@ class ProfilePictureSerializer(serializers.ModelSerializer):
             'user': {'read_only': True}
         }
 
+    def update(self, instance, validated_data):
+        if 'picture' in validated_data:
+            instance.picture.delete()
+        return super().update(instance, validated_data)
+
 
 class MusicStyleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,6 +108,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         model = Album
         fields = ('id', 'title', 'picture')
 
+    def update(self, instance, validated_data):
+        if 'picture' in validated_data:
+            instance.picture.delete()
+        return super().update(instance, validated_data)
+
 
 class CompleteAlbumSerializer(AlbumSerializer):
     sounds = MinimalSoundSerializer(many=True, read_only=True)
@@ -133,6 +143,11 @@ class SoundSerializer(MinimalSoundSerializer):
     def create(self, validated_data):
         validated_data['added_by'] = self.context['request'].user
         return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if 'file' in validated_data:
+            instance.file.delete()
+        return super().update(instance, validated_data)
 
 
 class CompleteSoundSerializer(SoundSerializer):

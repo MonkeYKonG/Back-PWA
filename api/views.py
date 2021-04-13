@@ -112,6 +112,10 @@ class SoundViewSet(ProtectedManagementViewSet):
             return CompleteSoundSerializer
         return super().get_serializer_class()
 
+    def destroy(self, request, *args, **kwargs):
+        self.get_object().file.delete()
+        return super().destroy(request, *args, **kwargs)
+
     @action(methods=['POST'], detail=True, serializer_class=SoundCommentSerializer)
     def comment(self, request, pk=None):
         sound = self.get_object()
@@ -258,9 +262,6 @@ class UpdateProfilePicture(generics.UpdateAPIView):
             return super().update(request, *args, **kwargs)
         print(request.method)
         raise NotImplementedError('Only partial update is allow')
-
-    # def partial_update(self, request, *args, **kwargs):
-    #     return super().partial_update(request, *args, **kwargs)
 
 
 class MusicStyleViewSet(viewsets.ReadOnlyModelViewSet):

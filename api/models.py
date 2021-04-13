@@ -9,11 +9,6 @@ class ProfilePicture(models.Model):
     picture = models.FileField(null=True)
 
 
-class ProfileNotificationSubscription(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_subscription')
-    token = models.CharField(max_length=0x200)
-
-
 class Album(models.Model):
     title = models.TextField()
     picture = models.FileField(null=True)
