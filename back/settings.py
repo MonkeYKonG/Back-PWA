@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api',
     'oauth2_provider',
     'rest_framework',
+    'push_notifications',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "FCM_API_KEY": "AAAAqwDmnh0:APA91bELxPd1tgZoXE8Xu4Rg3qY9_27HbfNP7cogonrHLkYWOCOytNS8KQ_8ZCtZeeOhfgOncUpOf6FrzmKGwpgs9Tbt5FHHk9KxJB4oN-HLeKbOzkCWieohl6E1AiwmccdHzpIewjXlGA9RpSL47qMSSjx30B7MIA",
+}

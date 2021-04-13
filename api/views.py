@@ -1,13 +1,17 @@
 import abc
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import Http404
+from django.conf import settings
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from rest_framework import permissions, viewsets, generics, mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from api import models
 from api.models import User, Sound, Album, Playlist, MusicStyle, Artist, SoundComment, PlaylistComment, UserFollowing, \
-    PlaylistFollowing, SoundLike, PlaylistLike
+    PlaylistFollowing, SoundLike, PlaylistLike, ProfilePicture
 from api.serializers import UserSerializer, SoundSerializer, AlbumSerializer, PlaylistSerializer, ArtistSerializer, \
     MusicStyleSerializer, SoundCommentSerializer, PlaylistCommentSerializer, UserFollowingSerializer, \
     PlaylistFollowingSerializer, SoundLikeSerializer, PlaylistLikeSerializer, CompleteUserSerializer, \
@@ -231,7 +235,41 @@ class GetProfile(generics.RetrieveAPIView):
         return super().retrieve(request, *args, **kwargs)
 
 
+class UpdateProfilePicture(generics.UpdateAPIView):
+    serializer_class = ProfilePictureSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def verify_self(self, request):
+        try:
+            profile_picture = request.user.profile_picture
+            return int(profile_picture.user.pk) == int(request.user.pk)
+        except:
+            return True
+
+    def get_queryset(self):
+        return ProfilePicture.objects.filter(user=self.request.user.pk)
+
+    def get_permissions(self):
+        return super().get_permissions()
+
+    def update(self, request, *args, **kwargs):
+        self.kwargs['pk'] = request.user.profile_picture.pk
+        if request.method == 'PATCH':
+            return super().update(request, *args, **kwargs)
+        print(request.method)
+        raise NotImplementedError('Only partial update is allow')
+
+    # def partial_update(self, request, *args, **kwargs):
+    #     return super().partial_update(request, *args, **kwargs)
+
+
 class MusicStyleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MusicStyle.objects.all()
     serializer_class = MusicStyleSerializer
     permission_classes = []
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        models.ProfilePicture.objects.create(user=instance)

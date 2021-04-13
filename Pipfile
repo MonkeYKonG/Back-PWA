@@ -12,6 +12,7 @@ daphne = "*"
 pyyaml = "*"
 uritemplate = "*"
 mysqlclient = "*"
+django-push-notifications = "*"
 
 [dev-packages]
 

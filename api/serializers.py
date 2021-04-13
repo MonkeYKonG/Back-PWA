@@ -17,6 +17,9 @@ class ProfilePictureSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfilePicture
         fields = ('picture', 'user')
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
 
 
 class MusicStyleSerializer(serializers.ModelSerializer):
