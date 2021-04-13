@@ -122,6 +122,9 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer = SoundCommentSerializer(data=request.data, context={'request': request, 'sound': sound})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        devices = sound.added_by.gcmdevice_set
+        for device in devices.all():
+            device.send_message("Quelqu'un a commenté votre son.")
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=SoundLikeSerializer)
@@ -130,6 +133,9 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer = SoundLikeSerializer(data=request.data, context={'request': request, 'sound': sound})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        devices = sound.added_by.gcmdevice_set
+        for device in devices.all():
+            device.send_message("Quelqu'un a aime votre son.")
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=SoundLikeSerializer)
@@ -194,6 +200,9 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer = PlaylistCommentSerializer(data=request.data, context={'request': request, 'playlist': playlist})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        devices = playlist.added_by.gcmdevice_set
+        for device in devices.all():
+            device.send_message("Quelqu'un a commenté votre playlist.")
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=PlaylistLikeSerializer)
@@ -202,6 +211,9 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer = PlaylistLikeSerializer(data=request.data, context={'request': request, 'playlist': playlist})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        devices = playlist.added_by.gcmdevice_set
+        for device in devices.all():
+            device.send_message("Quelqu'un a aimé votre playlist.")
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=PlaylistLikeSerializer)
