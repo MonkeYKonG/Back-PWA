@@ -170,3 +170,6 @@ PUSH_NOTIFICATIONS_SETTINGS = {
         "FCM_API_KEY": "AAAAqwDmnh0:APA91bELxPd1tgZoXE8Xu4Rg3qY9_27HbfNP7cogonrHLkYWOCOytNS8KQ_8ZCtZeeOhfgOncUpOf6FrzmKGwpgs9Tbt5FHHk9KxJB4oN-HLeKbOzkCWieohl6E1AiwmccdHzpIewjXlGA9RpSL47qMSSjx30B7MIA",
 }
 
+# Configure Django App for Heroku.
+import django_heroku
+django_heroku.settings(locals())
