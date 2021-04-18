@@ -9,8 +9,22 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 
+import django_heroku
 from pathlib import Path
+
+try:
+    import environ
+
+    env = environ.Env(
+        # set casting, default value
+        DEBUG=(bool, False)
+    )
+    # reading .env file
+    environ.Env.read_env()
+except ImportError:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -166,10 +180,21 @@ STATIC_ROOT = 'static/'
 MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
 
+# Push notification settings
+
 PUSH_NOTIFICATIONS_SETTINGS = {
         "FCM_API_KEY": "AAAAqwDmnh0:APA91bELxPd1tgZoXE8Xu4Rg3qY9_27HbfNP7cogonrHLkYWOCOytNS8KQ_8ZCtZeeOhfgOncUpOf6FrzmKGwpgs9Tbt5FHHk9KxJB4oN-HLeKbOzkCWieohl6E1AiwmccdHzpIewjXlGA9RpSL47qMSSjx30B7MIA",
 }
 
+# S3 file upload settings
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_REGION_NAME = 'eu-west-3'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 # Configure Django App for Heroku.
-import django_heroku
 django_heroku.settings(locals())

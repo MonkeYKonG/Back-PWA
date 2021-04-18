@@ -15,6 +15,8 @@ mysqlclient = "*"
 django-push-notifications = "*"
 psycopg2-binary = "*"
 django-heroku = "*"
+django-storages = "*"
+boto3 = "*"
 
 [dev-packages]
 

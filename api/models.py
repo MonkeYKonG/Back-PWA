@@ -17,7 +17,7 @@ class Album(models.Model):
 class Artist(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
-
+True
 class MusicStyle(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
