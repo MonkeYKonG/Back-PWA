@@ -261,10 +261,13 @@ class UserSerializer(MinimalUserSerializer):
 
 class CompleteUserSerializer(MinimalUserSerializer):
     notification_subscription = serializers.CharField(read_only=True, source='notification_subscription.token')
+    sounds = MinimalSoundSerializer(read_only=True, many=True)
+    playlists = MinimalPlaylistSerializer(read_only=True, many=True)
     albums = AlbumSerializer(read_only=True, many=True)
     sound_comments = SoundCommentSerializer(read_only=True, many=True)
     playlist_comments = PlaylistCommentSerializer(read_only=True, many=True)
     followers = UserFollowingSerializer(read_only=True, many=True)
+    followed = serializers.IntegerField(read_only=True, source='user_followed.count')
     user_followed = UserFollowingSerializer(read_only=True, many=True)
     sound_likes = SoundLikeSerializer(read_only=True, many=True)
     playlist_likes = PlaylistLikeSerializer(read_only=True, many=True)
