@@ -12,12 +12,13 @@ class ProfilePicture(models.Model):
 class Album(models.Model):
     title = models.TextField()
     picture = models.FileField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
 
 
 class Artist(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 
-True
+
 class MusicStyle(models.Model):
     name = models.CharField(max_length=0x100, unique=True)
 

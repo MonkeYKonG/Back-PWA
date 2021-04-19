@@ -137,7 +137,7 @@ class CompleteArtistSerializer(ArtistSerializer):
 class SoundSerializer(MinimalSoundSerializer):
     class Meta(MinimalSoundSerializer.Meta):
         fields = MinimalSoundSerializer.Meta.fields + (
-            'album', 'added_by', 'album',
+            'album', 'added_by',
         )
 
     def create(self, validated_data):
