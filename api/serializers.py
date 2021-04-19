@@ -106,7 +106,7 @@ class MinimalSoundSerializer(serializers.ModelSerializer):
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = ('id', 'title', 'picture')
+        fields = ('id', 'title', 'picture', 'added_by')
 
     def update(self, instance, validated_data):
         if 'picture' in validated_data:
