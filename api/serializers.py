@@ -113,6 +113,11 @@ class AlbumSerializer(serializers.ModelSerializer):
             instance.picture.delete()
         return super().update(instance, validated_data)
 
+    def create(self, validated_data):
+        print(self.context['request'])
+        validated_data['added_by'] = self.context['request'].user
+        return super().create(validated_data)
+
 
 class CompleteAlbumSerializer(AlbumSerializer):
     sounds = MinimalSoundSerializer(many=True, read_only=True)

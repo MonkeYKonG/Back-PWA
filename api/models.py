@@ -12,7 +12,7 @@ class ProfilePicture(models.Model):
 class Album(models.Model):
     title = models.TextField()
     picture = models.FileField(null=True)
-    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums', editable=False)
 
 
 class Artist(models.Model):

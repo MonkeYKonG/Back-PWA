@@ -272,7 +272,6 @@ class UpdateProfilePicture(generics.UpdateAPIView):
         self.kwargs['pk'] = request.user.profile_picture.pk
         if request.method == 'PATCH':
             return super().update(request, *args, **kwargs)
-        print(request.method)
         raise NotImplementedError('Only partial update is allow')
 
 
