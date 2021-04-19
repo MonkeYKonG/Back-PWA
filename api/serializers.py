@@ -252,10 +252,11 @@ class UserSerializer(MinimalUserSerializer):
     playlists = MinimalPlaylistSerializer(read_only=True, many=True)
     followers = serializers.IntegerField(read_only=True, source='followers.count')
     followed = serializers.IntegerField(read_only=True, source='user_followed.count')
+    albums = AlbumSerializer(read_only=True, many=True)
 
     class Meta(MinimalUserSerializer.Meta):
         fields = MinimalUserSerializer.Meta.fields + (
-        'sounds_count', 'playlists_count', 'sounds', 'playlists', 'followers', 'followed')
+        'sounds_count', 'playlists_count', 'sounds', 'playlists', 'followers', 'followed', 'albums')
 
 
 class CompleteUserSerializer(MinimalUserSerializer):
