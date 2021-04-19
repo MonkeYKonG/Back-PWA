@@ -34,10 +34,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'jku9x9b1$)vi0)y)i#a4h%#+f*u_#v*fzq9*frp7&ff)i_%g-l'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = ['*']
 
@@ -183,7 +183,7 @@ MEDIA_URL = '/media/'
 # Push notification settings
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "FCM_API_KEY": "AAAAqwDmnh0:APA91bELxPd1tgZoXE8Xu4Rg3qY9_27HbfNP7cogonrHLkYWOCOytNS8KQ_8ZCtZeeOhfgOncUpOf6FrzmKGwpgs9Tbt5FHHk9KxJB4oN-HLeKbOzkCWieohl6E1AiwmccdHzpIewjXlGA9RpSL47qMSSjx30B7MIA",
+    "FCM_API_KEY": os.environ['DJANGO_FCM_API_KEY'],
 }
 
 # S3 file upload settings
@@ -194,7 +194,7 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_REGION_NAME = 'eu-west-3'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = os.environ.get('DJANGO_DEFAULT_FILE_STORAGE')
 
 # Configure Django App for Heroku.
 django_heroku.settings(locals())
