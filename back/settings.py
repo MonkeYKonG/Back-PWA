@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'back.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
+        'HOST': os.environ.get('DJANGO_DB_HOST', '127.0.0.1'),
         'USER': 'pwa',
         'NAME': 'pwa',
         'PASSWORD': 'pwa'
@@ -194,7 +194,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_REGION_NAME = 'eu-west-3'
 
-DEFAULT_FILE_STORAGE = os.environ.get('DJANGO_DEFAULT_FILE_STORAGE')
+if os.environ.get('DJANGO_DEFAULT_FILE_STORAGE'):
+    DEFAULT_FILE_STORAGE = os.environ.get('DJANGO_DEFAULT_FILE_STORAGE')
 
 # Configure Django App for Heroku.
 django_heroku.settings(locals())

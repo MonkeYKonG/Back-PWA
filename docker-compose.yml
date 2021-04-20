@@ -23,7 +23,10 @@ services:
       - /var/www/media:/media
       - /var/www/static:/static
     environment:
-      - "DJANGO_SETTINGS_MODULE=back.settings-production"
+      - "PORT:8000"
+      - "DJANGO_SECRET_KEY=1234"
+      - "DJANGO_FCM_API_KEY=1234"
+      - "DJANGO_DB_HOST=mysql"
     depends_on:
       - mysql
     ports:
