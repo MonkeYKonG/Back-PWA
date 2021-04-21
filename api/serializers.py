@@ -47,7 +47,7 @@ class BaseCommentSerializer(serializers.ModelSerializer):
 
     def send_notification_to_devices(self, user: User):
         devices = user.gcmdevice_set.filter(active=True)
-        sender = self.instance.added_by
+        sender = self.instance.post_by
         for device in devices:
             device.send_message(f'{sender.username} vous à tagué dans un commentaire.')
 
