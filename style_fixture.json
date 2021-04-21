@@ -5,5 +5,26 @@
     "fields": {
       "name": "dub"
     }
+  },
+{
+    "model": "api.MusicStyle",
+    "pk": 2,
+    "fields": {
+      "name": "électro"
+    }
+  },
+{
+    "model": "api.MusicStyle",
+    "pk": 3,
+    "fields": {
+      "name": "classique"
+    }
+  },
+{
+    "model": "api.MusicStyle",
+    "pk": 4,
+    "fields": {
+      "name": "variete"
+    }
   }
 ]

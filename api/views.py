@@ -135,6 +135,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer = SoundCommentSerializer(data=request.data, context={'request': request, 'sound': sound})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        serializer.search_tags_and_notify(serializer.data['message'])
         devices = sound.added_by.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(f"{request.user.username} a commenté votre son {sound.title}.")

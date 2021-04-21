@@ -34,16 +34,6 @@ class MusicStyleSerializer(serializers.ModelSerializer):
 
 
 class BaseCommentSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        message = validated_data['message']
-        self.search_tags_and_notify(message)
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        message = validated_data['message']
-        self.search_tags_and_notify(message)
-        return super().update(instance, validated_data)
-
     def search_tags_and_notify(self, message: str):
         tags = self.get_tags(message)
         for tag in tags:
