@@ -82,7 +82,7 @@ class UserViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = user.gcmdevice_set
-        for device in devices.filter(is_active=True):
+        for device in devices.filter(active=True):
             device.send_message(f'{request.user.username} vous suit!')
         return Response(serializer.data)
 
@@ -124,7 +124,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         poster = sound.added_by
         followers = poster.followers.all()
         for follower in followers:
-            devices = follower.gcmdevice_set.filter(is_active=True)
+            devices = follower.gcmdevice_set.filter(active=True)
             for device in devices:
                 device.send_message(f'{poster.username} à ajouté un nouveau son: {sound.title}')
         return super().create(request, *args, **kwargs)
@@ -136,7 +136,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = sound.added_by.gcmdevice_set
-        for device in devices.filter(is_active=True):
+        for device in devices.filter(active=True):
             device.send_message(f"{request.user.username} a commenté votre son {sound.title}.")
         return Response(serializer.data)
 
@@ -147,7 +147,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = sound.added_by.gcmdevice_set
-        for device in devices.filter(is_active=True):
+        for device in devices.filter(active=True):
             device.send_message(f"{request.user.username} a aime votre son {sound.title}.")
         return Response(serializer.data)
 
@@ -214,7 +214,7 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = playlist.added_by.gcmdevice_set
-        for device in devices.filter(is_active=True):
+        for device in devices.filter(active=True):
             device.send_message(f"{request.user.username} a commenté votre playlist {playlist.title}.")
         return Response(serializer.data)
 
@@ -225,7 +225,7 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = playlist.added_by.gcmdevice_set
-        for device in devices.filter(is_active=True):
+        for device in devices.filter(active=True):
             device.send_message(f"{request.user.username} a aimé votre playlist {playlist.title}.")
         return Response(serializer.data)
 
