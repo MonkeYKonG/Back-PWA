@@ -49,7 +49,13 @@ class BaseCommentSerializer(serializers.ModelSerializer):
         devices = user.gcmdevice_set.filter(active=True)
         sender = self.instance.post_by
         for device in devices:
-            device.send_message(f'{sender.username} vous à tagué dans un commentaire.')
+            device.send_message(
+                f'{sender.username} vous a tagué dans un commentaire: {self.instance.message}',
+                title=f'{sender.username} vous à tagué',
+                extra={
+                    "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}"
+                }
+            )
 
     def get_tags(self, message: str) -> list[str]:
         tags = []

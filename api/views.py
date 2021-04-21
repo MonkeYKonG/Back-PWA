@@ -83,7 +83,12 @@ class UserViewSet(ProtectedManagementViewSet):
         serializer.save()
         devices = user.gcmdevice_set
         for device in devices.filter(active=True):
-            device.send_message(f'{request.user.username} vous suit!')
+            device.send_message(
+                title=f'{request.user.username} vous suit!',
+                extra={
+                    "route": f"/artist/{user.pk}"
+                }
+            )
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=UserFollowingSerializer)
@@ -120,14 +125,21 @@ class SoundViewSet(ProtectedManagementViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        result = super().create(request, *args, **kwargs)
         sound = self.get_object()
         poster = sound.added_by
         followers = poster.followers.all()
         for follower in followers:
             devices = follower.gcmdevice_set.filter(active=True)
             for device in devices:
-                device.send_message(f'{poster.username} à ajouté un nouveau son: {sound.title}')
-        return super().create(request, *args, **kwargs)
+                device.send_message(
+                    f'{poster.username} à ajouté un nouveau son: {sound.title}',
+                    title=f'{poster.username} à ajouté un nouveau son',
+                    extra={
+                        "route": f"/details/{sound.pk}"
+                    }
+                )
+        return result
 
     @action(methods=['POST'], detail=True, serializer_class=SoundCommentSerializer)
     def comment(self, request, pk=None):
@@ -138,7 +150,13 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.search_tags_and_notify(serializer.data['message'])
         devices = sound.added_by.gcmdevice_set
         for device in devices.filter(active=True):
-            device.send_message(f"{request.user.username} a commenté votre son {sound.title}.")
+            device.send_message(
+                f"{request.user.username} a commenté votre son {sound.title}.",
+                title=f'{sound.title} nouveau commentaire',
+                extra={
+                    "route": f"/details/{sound.pk}#{serializer.data['id']}"
+                }
+            )
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=SoundLikeSerializer)
