@@ -151,10 +151,11 @@ class SoundViewSet(ProtectedManagementViewSet):
         devices = sound.added_by.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(
-                f"{request.user.username} a commenté votre son {sound.title}.",
-                title=f'{sound.title} nouveau commentaire',
+                f"{serializer.data['message']}",
+                title=f'{sound.title} nouveau commentaire de {request.user.pk}',
                 extra={
-                    "route": f"/details/{sound.pk}#{serializer.data['id']}"
+                    "route": f"/details/{sound.pk}#{serializer.data['id']}",
+                    "data": f"/details/{sound.pk}#{serializer.data['id']}"
                 }
             )
         return Response(serializer.data)

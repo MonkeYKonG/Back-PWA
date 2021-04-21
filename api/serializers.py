@@ -53,7 +53,8 @@ class BaseCommentSerializer(serializers.ModelSerializer):
                 f'{self.instance.message}',
                 extra={
                     'title': f'{sender.username} vous a tagué',
-                    "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}"
+                    "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}",
+                    "data": f"/details/{self.instance.sound.pk}#{self.instance.pk}"
                 }
             )
 
