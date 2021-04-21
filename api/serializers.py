@@ -71,8 +71,6 @@ class BaseCommentSerializer(serializers.ModelSerializer):
 
 
 class SoundCommentSerializer(BaseCommentSerializer):
-    post_by = serializers.IntegerField()
-
     class Meta:
         model = SoundComment
         fields = ('id', 'sound', 'post_by', 'added_on', 'message')
