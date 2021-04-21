@@ -84,7 +84,7 @@ class UserViewSet(ProtectedManagementViewSet):
         devices = user.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(
-                title=f'{request.user.username} vous suit',
+                f'{request.user.username} vous suit',
                 extra={
                     "route": f"/artist/{user.pk}"
                 }
