@@ -33,7 +33,44 @@ class MusicStyleSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class SoundCommentSerializer(serializers.ModelSerializer):
+class BaseCommentSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        message = validated_data['message']
+        self.search_tags_and_notify(message)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        message = validated_data['message']
+        self.search_tags_and_notify(message)
+        return super().update(instance, validated_data)
+
+    def search_tags_and_notify(self, message: str):
+        tags = self.get_tags(message)
+        for tag in tags:
+            self.notify_tagged_user(tag)
+
+    def notify_tagged_user(self, tag: str):
+        queryset = User.objects.filter(username=tag)
+        if queryset.exists():
+            for user in queryset:
+                self.send_notification_to_devices(user)
+
+    def send_notification_to_devices(self, user: User):
+        devices = user.gcmdevice_set.filter(is_active=True)
+        sender = self.instance.added_by
+        for device in devices:
+            device.send_message(f'{sender.username} vous à tagué dans un commentaire.')
+
+    def get_tags(self, message: str) -> list[str]:
+        tags = []
+        split_message = message.split(' ')
+        for word in split_message:
+            if len(word) > 1 and word.startswith('@'):
+                tags.append(word[1:])
+        return tags
+
+
+class SoundCommentSerializer(BaseCommentSerializer):
     class Meta:
         model = SoundComment
         fields = ('id', 'sound', 'post_by', 'added_on', 'message')
@@ -44,7 +81,7 @@ class SoundCommentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class PlaylistCommentSerializer(serializers.ModelSerializer):
+class PlaylistCommentSerializer(BaseCommentSerializer):
     class Meta:
         model = PlaylistComment
         fields = ('id', 'playlist', 'post_by', 'added_on', 'message')

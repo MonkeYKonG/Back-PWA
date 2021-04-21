@@ -81,6 +81,9 @@ class UserViewSet(ProtectedManagementViewSet):
         serializer = UserFollowingSerializer(data=request.data, context={'request': request, 'user': user})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        devices = user.gcmdevice_set
+        for device in devices.filter(is_active=True):
+            device.send_message(f'{request.user.username} vous suit!')
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=UserFollowingSerializer)
@@ -116,6 +119,16 @@ class SoundViewSet(ProtectedManagementViewSet):
         self.get_object().file.delete()
         return super().destroy(request, *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        sound = self.get_object()
+        poster = sound.added_by
+        followers = poster.followers.all()
+        for follower in followers:
+            devices = follower.gcmdevice_set.filter(is_active=True)
+            for device in devices:
+                device.send_message(f'{poster.username} à ajouté un nouveau son: {sound.title}')
+        return super().create(request, *args, **kwargs)
+
     @action(methods=['POST'], detail=True, serializer_class=SoundCommentSerializer)
     def comment(self, request, pk=None):
         sound = self.get_object()
@@ -123,8 +136,8 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = sound.added_by.gcmdevice_set
-        for device in devices.all():
-            device.send_message("Quelqu'un a commenté votre son.")
+        for device in devices.filter(is_active=True):
+            device.send_message(f"{request.user.username} a commenté votre son {sound.title}.")
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=SoundLikeSerializer)
@@ -134,8 +147,8 @@ class SoundViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = sound.added_by.gcmdevice_set
-        for device in devices.all():
-            device.send_message("Quelqu'un a aime votre son.")
+        for device in devices.filter(is_active=True):
+            device.send_message(f"{request.user.username} a aime votre son {sound.title}.")
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=SoundLikeSerializer)
@@ -201,8 +214,8 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = playlist.added_by.gcmdevice_set
-        for device in devices.all():
-            device.send_message("Quelqu'un a commenté votre playlist.")
+        for device in devices.filter(is_active=True):
+            device.send_message(f"{request.user.username} a commenté votre playlist {playlist.title}.")
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True, serializer_class=PlaylistLikeSerializer)
@@ -212,8 +225,8 @@ class PlaylistViewSet(ProtectedManagementViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         devices = playlist.added_by.gcmdevice_set
-        for device in devices.all():
-            device.send_message("Quelqu'un a aimé votre playlist.")
+        for device in devices.filter(is_active=True):
+            device.send_message(f"{request.user.username} a aimé votre playlist {playlist.title}.")
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=True, serializer_class=PlaylistLikeSerializer)
