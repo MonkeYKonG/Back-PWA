@@ -84,7 +84,7 @@ class UserViewSet(ProtectedManagementViewSet):
         devices = user.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(
-                title=f'{request.user.username} vous suit!',
+                title=f'{request.user.username} vous suit',
                 extra={
                     "route": f"/artist/{user.pk}"
                 }
@@ -133,8 +133,8 @@ class SoundViewSet(ProtectedManagementViewSet):
             devices = follower.gcmdevice_set.filter(active=True)
             for device in devices:
                 device.send_message(
-                    f'{poster.username} à ajouté un nouveau son: {sound.title}',
-                    title=f'{poster.username} à ajouté un nouveau son',
+                    f'{poster.username} a ajouté un nouveau son: {sound.title}',
+                    title=f'{poster.username} a ajouté un nouveau son',
                     extra={
                         "route": f"/details/{sound.pk}"
                     }
