@@ -50,7 +50,8 @@ class BaseCommentSerializer(serializers.ModelSerializer):
         sender = self.instance.post_by
         for device in devices:
             device.send_message(
-                {
+                None,
+                extra={
                     'body': f'{self.instance.message}',
                     'title': f'{sender.username} vous a tagué',
                     "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}",
