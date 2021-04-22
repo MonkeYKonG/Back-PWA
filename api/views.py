@@ -68,7 +68,7 @@ class UserViewSet(ProtectedManagementViewSet):
             profile_picture = user.profile_picture
             serializer = ProfilePictureSerializer(profile_picture, data={'picture': request.FILES['picture']},
                                                   partial=True)
-        except: # TODO Search for good exception
+        except:  # TODO Search for good exception
             data = {'user': request.user.pk, 'picture': request.FILES['picture']}
             serializer = ProfilePictureSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -84,9 +84,12 @@ class UserViewSet(ProtectedManagementViewSet):
         devices = user.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(
-                f'{request.user.username} vous suit',
+                None,
                 extra={
-                    "route": f"/artist/{user.pk}"
+                    'data': {
+                        'title': f'{request.user.username} vous suit',
+                        'route': f"/artist/{user.pk}",
+                    }
                 }
             )
         return Response(serializer.data)
@@ -133,10 +136,13 @@ class SoundViewSet(ProtectedManagementViewSet):
             devices = follower.gcmdevice_set.filter(active=True)
             for device in devices:
                 device.send_message(
-                    f'{poster.username} a ajouté un nouveau son: {sound.title}',
-                    title=f'{poster.username} a ajouté un nouveau son',
+                    None,
                     extra={
-                        "route": f"/details/{sound.pk}"
+                        'date': {
+                            "route": f"/details/{sound.pk}",
+                            'title': f'{poster.username} a ajouté un nouveau son',
+                            'body': f'{poster.username} a ajouté un nouveau son: {sound.title}',
+                        }
                     }
                 )
         return result
@@ -151,11 +157,13 @@ class SoundViewSet(ProtectedManagementViewSet):
         devices = sound.added_by.gcmdevice_set
         for device in devices.filter(active=True):
             device.send_message(
-                f"{serializer.data['message']}",
-                title=f'{sound.title} nouveau commentaire de {request.user.username}',
+                None,
                 extra={
-                    "route": f"/details/{sound.pk}#{serializer.data['id']}",
-                    "data": f"/details/{sound.pk}#{serializer.data['id']}"
+                    "data": {
+                        'body': f"{serializer.data['message']}",
+                        'title': f'{sound.title} nouveau commentaire de {request.user.username}',
+                        "route": f"/details/{sound.pk}#{serializer.data['id']}",
+                    }
                 }
             )
         return Response(serializer.data)
