@@ -54,7 +54,6 @@ class BaseCommentSerializer(serializers.ModelSerializer):
                     'body': f'{self.instance.message}',
                     'title': f'{sender.username} vous a tagué',
                     "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}",
-                    "data": f"/details/{self.instance.sound.pk}#{self.instance.pk}"
                 }
             )
 
