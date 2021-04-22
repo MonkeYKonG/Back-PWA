@@ -52,9 +52,11 @@ class BaseCommentSerializer(serializers.ModelSerializer):
             device.send_message(
                 None,
                 extra={
-                    'body': f'{self.instance.message}',
-                    'title': f'{sender.username} vous a tagué',
-                    "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}",
+                    'data': {
+                        'body': f'{self.instance.message}',
+                        'title': f'{sender.username} vous a tagué',
+                        "route": f"/details/{self.instance.sound.pk}#{self.instance.pk}",
+                    }
                 }
             )
 
@@ -295,7 +297,7 @@ class UserSerializer(MinimalUserSerializer):
 
     class Meta(MinimalUserSerializer.Meta):
         fields = MinimalUserSerializer.Meta.fields + (
-        'sounds_count', 'playlists_count', 'sounds', 'playlists', 'followers', 'followed', 'albums')
+            'sounds_count', 'playlists_count', 'sounds', 'playlists', 'followers', 'followed', 'albums')
 
 
 class CompleteUserSerializer(MinimalUserSerializer):
