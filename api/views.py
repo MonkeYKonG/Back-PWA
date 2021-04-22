@@ -152,7 +152,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         for device in devices.filter(active=True):
             device.send_message(
                 f"{serializer.data['message']}",
-                title=f'{sound.title} nouveau commentaire de {request.user.pk}',
+                title=f'{sound.title} nouveau commentaire de {request.user.username}',
                 extra={
                     "route": f"/details/{sound.pk}#{serializer.data['id']}",
                     "data": f"/details/{sound.pk}#{serializer.data['id']}"
