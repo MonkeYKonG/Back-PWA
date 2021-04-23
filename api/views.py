@@ -134,7 +134,7 @@ class SoundViewSet(ProtectedManagementViewSet):
         poster = sound.added_by
         followers = poster.followers.all()
         for follower in followers:
-            devices = follower.gcmdevice_set.filter(active=True)
+            devices = follower.added_by.gcmdevice_set.filter(active=True)
             for device in devices:
                 device.send_message(
                     None,
