@@ -129,7 +129,7 @@ class SoundViewSet(ProtectedManagementViewSet):
 
     def create(self, request, *args, **kwargs):
         result = super().create(request, *args, **kwargs)
-        self.kwargs['pk'] = result['id']
+        self.kwargs['pk'] = result.data['id']
         sound = self.get_object()
         poster = sound.added_by
         followers = poster.followers.all()
